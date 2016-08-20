@@ -54,7 +54,7 @@ class Lock(object):
 
     def __init__(self, file_path):
         self._file_path = file_path
-        self._fd = None
+        self._file = None
         self._reads = 0
         self._writes = 0
 
@@ -73,14 +73,15 @@ class Lock(object):
         start_time = time.time()
         while (time.time() - start_time) < timeout:
             try:
-                if self._fd is None:
-                    self._fd = os.open(self._file_path, os.O_RDWR)
+                if self._file is None:
+                    self._file = open(self._file_path, 'r+')
 
-                fcntl.lockf(self._fd, op | fcntl.LOCK_NB)
+                fcntl.lockf(self._file, op | fcntl.LOCK_NB)
                 if op == fcntl.LOCK_EX:
-                    os.write(
-                        self._fd,
+                    self._file.write(
                         "pid=%s,host=%s" % (os.getpid(), socket.getfqdn()))
+                    self._file.truncate()
+                    self._file.flush()
                 return
 
             except IOError as error:
@@ -99,9 +100,9 @@ class Lock(object):
         be masquerading as write locks, but this removes either.
 
         """
-        fcntl.lockf(self._fd, fcntl.LOCK_UN)
-        os.close(self._fd)
-        self._fd = None
+        fcntl.lockf(self._file, fcntl.LOCK_UN)
+        self._file.close()
+        self._file = None
 
     def acquire_read(self, timeout=_default_timeout):
         """Acquires a recursive, shared lock for reading.
