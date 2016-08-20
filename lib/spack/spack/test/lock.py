@@ -30,7 +30,7 @@ import tempfile
 import unittest
 from multiprocessing import Process
 
-from llnl.util.filesystem import join_path, touch
+from llnl.util.filesystem import join_path
 from llnl.util.lock import *
 from spack.util.multiproc import Barrier
 
@@ -44,7 +44,6 @@ class LockTest(unittest.TestCase):
     def setUp(self):
         self.tempdir = tempfile.mkdtemp()
         self.lock_path = join_path(self.tempdir, 'lockfile')
-        touch(self.lock_path)
 
     def tearDown(self):
         shutil.rmtree(self.tempdir, ignore_errors=True)
