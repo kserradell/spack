@@ -1,5 +1,6 @@
 ##############################################################################
-# Copyright (c) 2017, The VOTCA Development Team (http://www.votca.org)
+# Copyright (c) 2013-2016, Lawrence Livermore National Security, LLC.
+# Produced at the Lawrence Livermore National Laboratory.
 #
 # This file is part of Spack.
 # Created by Todd Gamblin, tgamblin@llnl.gov, All rights reserved.
@@ -21,33 +22,20 @@
 # License along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##############################################################################
-
 from spack import *
 
 
-class VotcaCsg(CMakePackage):
-    """Versatile Object-oriented Toolkit for Coarse-graining
-       Applications (VOTCA) is a package intended to reduce the amount of
-       routine work when doing systematic coarse-graining of various
-       systems. The core is written in C++.
+class PySpefile(PythonPackage):
+    """Reader for SPE files part of pyspec a set of python routines for data
+       analysis of x-ray scattering experiments"""
 
-       This package contains the VOTCA coarse-graining engine.
-    """
-    homepage = "http://www.votca.org"
-    url      = "https://github.com/votca/csg/tarball/v1.4"
+    homepage = "https://github.com/conda-forge/spefile-feedstock"
+    url      = "https://github.com/conda-forge/spefile-feedstock.git"
 
-    version('develop', git='https://github.com/votca/csg', branch='master')
-    version('1.4', 'd009e761e5e3afd51eed89c420610a67')
+    version('1.6', git='https://github.com/conda-forge/spefile-feedstock.git',
+            commit='24394e066da8dee5e7608f556ca0203c9db217f9')
 
-    variant('debug', default=False, description='Build debug version')
+    depends_on('py-setuptools', type='build')
+    depends_on('py-numpy', type='run')
 
-    depends_on("cmake@2.8:", type='build')
-    depends_on("votca-tools")
-    depends_on("gromacs@5.1:")
-
-    def build_type(self):
-        spec = self.spec
-        if '+debug' in spec:
-            return 'Debug'
-        else:
-            return 'Release'
+    build_directory = 'recipe/src'

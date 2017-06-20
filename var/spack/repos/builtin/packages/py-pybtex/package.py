@@ -1,5 +1,6 @@
 ##############################################################################
-# Copyright (c) 2017, The VOTCA Development Team (http://www.votca.org)
+# Copyright (c) 2013-2016, Lawrence Livermore National Security, LLC.
+# Produced at the Lawrence Livermore National Laboratory.
 #
 # This file is part of Spack.
 # Created by Todd Gamblin, tgamblin@llnl.gov, All rights reserved.
@@ -25,29 +26,16 @@
 from spack import *
 
 
-class VotcaCsg(CMakePackage):
-    """Versatile Object-oriented Toolkit for Coarse-graining
-       Applications (VOTCA) is a package intended to reduce the amount of
-       routine work when doing systematic coarse-graining of various
-       systems. The core is written in C++.
+class PyPybtex(PythonPackage):
+    """Pybtex is a BibTeX-compatible bibliography processor written in
+       Python."""
 
-       This package contains the VOTCA coarse-graining engine.
-    """
-    homepage = "http://www.votca.org"
-    url      = "https://github.com/votca/csg/tarball/v1.4"
+    homepage = "https://pybtex.org"
+    url      = "https://pypi.io/packages/source/P/Pybtex/pybtex-0.21.tar.gz"
 
-    version('develop', git='https://github.com/votca/csg', branch='master')
-    version('1.4', 'd009e761e5e3afd51eed89c420610a67')
+    version('0.21', 'e7b320b2bcb34c664c4385533a2ea831')
 
-    variant('debug', default=False, description='Build debug version')
-
-    depends_on("cmake@2.8:", type='build')
-    depends_on("votca-tools")
-    depends_on("gromacs@5.1:")
-
-    def build_type(self):
-        spec = self.spec
-        if '+debug' in spec:
-            return 'Debug'
-        else:
-            return 'Release'
+    depends_on('py-setuptools', type='build')
+    depends_on('py-latexcodec@1.0.4:', type=('build', 'run'))
+    depends_on('py-pyyaml@3.01:', type=('build', 'run'))
+    depends_on('py-counter@1:', when='^python@:2.6', type=('build', 'run'))

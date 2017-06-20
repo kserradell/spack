@@ -1,5 +1,6 @@
 ##############################################################################
-# Copyright (c) 2017, The VOTCA Development Team (http://www.votca.org)
+# Copyright (c) 2013-2016, Lawrence Livermore National Security, LLC.
+# Produced at the Lawrence Livermore National Laboratory.
 #
 # This file is part of Spack.
 # Created by Todd Gamblin, tgamblin@llnl.gov, All rights reserved.
@@ -21,33 +22,22 @@
 # License along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##############################################################################
-
 from spack import *
 
 
-class VotcaCsg(CMakePackage):
-    """Versatile Object-oriented Toolkit for Coarse-graining
-       Applications (VOTCA) is a package intended to reduce the amount of
-       routine work when doing systematic coarse-graining of various
-       systems. The core is written in C++.
+class PySphinxcontribBibtex(PythonPackage):
+    """A Sphinx extension for BibTeX style citations."""
 
-       This package contains the VOTCA coarse-graining engine.
-    """
-    homepage = "http://www.votca.org"
-    url      = "https://github.com/votca/csg/tarball/v1.4"
+    homepage = "https://pypi.python.org/pypi/sphinxcontrib-bibtex"
+    url      = "https://pypi.io/packages/source/s/sphinxcontrib-bibtex/sphinxcontrib-bibtex-0.3.5.tar.gz"
 
-    version('develop', git='https://github.com/votca/csg', branch='master')
-    version('1.4', 'd009e761e5e3afd51eed89c420610a67')
+    version('0.3.5', 'd3c86836e2f6227b55a5ca9108590b1c')
 
-    variant('debug', default=False, description='Build debug version')
-
-    depends_on("cmake@2.8:", type='build')
-    depends_on("votca-tools")
-    depends_on("gromacs@5.1:")
-
-    def build_type(self):
-        spec = self.spec
-        if '+debug' in spec:
-            return 'Debug'
-        else:
-            return 'Release'
+    depends_on('py-setuptools', type='build')
+    depends_on('py-latexcodec@0.3.0:', type=('build', 'run'))
+    depends_on('py-pybtex@0.17:', type=('build', 'run'))
+    depends_on('pybtex-docutils@0.2.0:', type=('build', 'run'))
+    depends_on('py-six@1.4.1:', type=('build', 'run'))
+    depends_on('py-sphinx@1.0:', type=('build', 'run'))
+    depends_on('py-oset@0.1.3:', type=('build', 'run'))
+    depends_on('py-ordereddict@1.1:', when='^python@:2.6', type=('build', 'run'))

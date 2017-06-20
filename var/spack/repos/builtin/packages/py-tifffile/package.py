@@ -1,5 +1,6 @@
 ##############################################################################
-# Copyright (c) 2017, The VOTCA Development Team (http://www.votca.org)
+# Copyright (c) 2013-2016, Lawrence Livermore National Security, LLC.
+# Produced at the Lawrence Livermore National Laboratory.
 #
 # This file is part of Spack.
 # Created by Todd Gamblin, tgamblin@llnl.gov, All rights reserved.
@@ -21,33 +22,16 @@
 # License along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##############################################################################
-
 from spack import *
 
 
-class VotcaCsg(CMakePackage):
-    """Versatile Object-oriented Toolkit for Coarse-graining
-       Applications (VOTCA) is a package intended to reduce the amount of
-       routine work when doing systematic coarse-graining of various
-       systems. The core is written in C++.
+class PyTifffile(PythonPackage):
+    """Read and write image data from and to TIFF files."""
 
-       This package contains the VOTCA coarse-graining engine.
-    """
-    homepage = "http://www.votca.org"
-    url      = "https://github.com/votca/csg/tarball/v1.4"
+    homepage = "https://github.com/blink1073/tifffile"
+    url      = "https://pypi.io/packages/source/t/tifffile/tifffile-0.12.1.tar.gz"
 
-    version('develop', git='https://github.com/votca/csg', branch='master')
-    version('1.4', 'd009e761e5e3afd51eed89c420610a67')
+    version('0.12.1', '8a8afa74dd0df7915ac376a6cd7eeffc')
 
-    variant('debug', default=False, description='Build debug version')
-
-    depends_on("cmake@2.8:", type='build')
-    depends_on("votca-tools")
-    depends_on("gromacs@5.1:")
-
-    def build_type(self):
-        spec = self.spec
-        if '+debug' in spec:
-            return 'Debug'
-        else:
-            return 'Release'
+    depends_on('py-setuptools', type='build')
+    depends_on('py-numpy@1.8.2:',        type=('build', 'run'))

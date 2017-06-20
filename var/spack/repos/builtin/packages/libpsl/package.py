@@ -25,42 +25,33 @@
 from spack import *
 
 
-class Cube(AutotoolsPackage):
-    """Cube the profile viewer for Score-P and Scalasca profiles. It displays a
-    multi-dimensional performance space consisting of the dimensions:
-    - performance metric
-    - call path
-    - system resource
-    """
+class Libpsl(AutotoolsPackage):
+    """libpsl - C library to handle the Public Suffix List."""
 
-    homepage = "http://www.scalasca.org/software/cube-4.x/download.html"
-    url = "http://apps.fz-juelich.de/scalasca/releases/cube/4.2/dist/cube-4.2.3.tar.gz"
+    homepage = "https://github.com/rockdaboot/libpsl"
+    url      = "https://github.com/rockdaboot/libpsl/releases/download/libpsl-0.17.0/libpsl-0.17.0.tar.gz"
 
-    # Some versions fail with parallel builds/installs
-    parallel = False
+    version('0.17.0', 'fed13f33d0d6dc13ef24de255630bfcb')
 
-    version('4.3.5', 'e5dce986e3c6381ea3a5fcb66c553adc')
-    version('4.3.4', '50f73060f55311cb12c5b3cb354d59fa')
-    version('4.3.3', '07e109248ed8ffc7bdcce614264a2909')
+    depends_on('icu4c')
 
-    version('4.2.3', '8f95b9531f5a8f8134f279c2767c9b20')
+    depends_on('gettext', type='build')
+    depends_on('pkg-config@0.9.0:', type='build')
+    depends_on('python@2.7:', type='build')
 
-    variant('gui', default=False, description='Build CUBE GUI')
-
-    depends_on('zlib')
-
-    depends_on('qt@5:', when='@4.3.0:4.3.999 +gui')
-    depends_on('qt@4.8:', when='@4.2.0:4.2.999 +gui')
-
-    def url_for_version(self, version):
-        return 'http://apps.fz-juelich.de/scalasca/releases/cube/{0}/dist/cube-{1}.tar.gz'.format(version.up_to(2), version)
+    # TODO: Add a 'test' deptype
+    # depends_on('valgrind', type='test')
 
     def configure_args(self):
         spec = self.spec
 
-        configure_args = ['--enable-shared']
+        args = [
+            'PYTHON={0}'.format(spec['python'].command.path),
+        ]
 
-        if '+gui' not in spec:
-            configure_args.append('--without-gui')
+        if self.run_tests:
+            args.append('--enable-valgrind-tests')
+        else:
+            args.append('--disable-valgrind-tests')
 
-        return configure_args
+        return args

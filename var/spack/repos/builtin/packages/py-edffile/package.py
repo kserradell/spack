@@ -1,5 +1,6 @@
 ##############################################################################
-# Copyright (c) 2017, The VOTCA Development Team (http://www.votca.org)
+# Copyright (c) 2013-2016, Lawrence Livermore National Security, LLC.
+# Produced at the Lawrence Livermore National Laboratory.
 #
 # This file is part of Spack.
 # Created by Todd Gamblin, tgamblin@llnl.gov, All rights reserved.
@@ -21,33 +22,19 @@
 # License along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##############################################################################
-
 from spack import *
 
 
-class VotcaCsg(CMakePackage):
-    """Versatile Object-oriented Toolkit for Coarse-graining
-       Applications (VOTCA) is a package intended to reduce the amount of
-       routine work when doing systematic coarse-graining of various
-       systems. The core is written in C++.
+class PyEdffile(PythonPackage):
+    """Generic class for Edf files manipulation."""
 
-       This package contains the VOTCA coarse-graining engine.
-    """
-    homepage = "http://www.votca.org"
-    url      = "https://github.com/votca/csg/tarball/v1.4"
+    homepage = "https://github.com/vasole/pymca/blob/master/PyMca5/PyMcaIO/EdfFile.py"
+    url      = "https://github.com/conda-forge/edffile-feedstock.git"
 
-    version('develop', git='https://github.com/votca/csg', branch='master')
-    version('1.4', 'd009e761e5e3afd51eed89c420610a67')
+    version('5.0.0', git='https://github.com/conda-forge/edffile-feedstock.git',
+            commit='be5ab4199db9f8209c59e31874934b8536b52301')
 
-    variant('debug', default=False, description='Build debug version')
+    depends_on('py-setuptools', type='build')
+    depends_on('py-numpy', type=('build', 'run'))
 
-    depends_on("cmake@2.8:", type='build')
-    depends_on("votca-tools")
-    depends_on("gromacs@5.1:")
-
-    def build_type(self):
-        spec = self.spec
-        if '+debug' in spec:
-            return 'Debug'
-        else:
-            return 'Release'
+    build_directory = 'recipe/src'
