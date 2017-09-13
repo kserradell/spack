@@ -1,5 +1,5 @@
 ##############################################################################
-# Copyright (c) 2013-2016, Lawrence Livermore National Security, LLC.
+# Copyright (c) 2013-2017, Lawrence Livermore National Security, LLC.
 # Produced at the Lawrence Livermore National Laboratory.
 #
 # This file is part of Spack.
@@ -7,7 +7,7 @@
 # LLNL-CODE-647188
 #
 # For details, see https://github.com/llnl/spack
-# Please also see the LICENSE file for our notice and the LGPL.
+# Please also see the NOTICE and LICENSE files for our notice and the LGPL.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License (as
@@ -330,59 +330,94 @@ class TestConcretize(object):
 
     def test_find_spec_parents(self):
         """Tests the spec finding logic used by concretization. """
-        s = Spec('a +foo',
-                 Spec('b +foo',
-                      Spec('c'),
-                      Spec('d +foo')),
-                 Spec('e +foo'))
+        s = Spec.from_literal({
+            'a +foo': {
+                'b +foo': {
+                    'c': None,
+                    'd+foo': None
+                },
+                'e +foo': None
+            }
+        })
 
         assert 'a' == find_spec(s['b'], lambda s: '+foo' in s).name
 
     def test_find_spec_children(self):
-        s = Spec('a',
-                 Spec('b +foo',
-                      Spec('c'),
-                      Spec('d +foo')),
-                 Spec('e +foo'))
+        s = Spec.from_literal({
+            'a': {
+                'b +foo': {
+                    'c': None,
+                    'd+foo': None
+                },
+                'e +foo': None
+            }
+        })
+
         assert 'd' == find_spec(s['b'], lambda s: '+foo' in s).name
-        s = Spec('a',
-                 Spec('b +foo',
-                      Spec('c +foo'),
-                      Spec('d')),
-                 Spec('e +foo'))
+
+        s = Spec.from_literal({
+            'a': {
+                'b +foo': {
+                    'c+foo': None,
+                    'd': None
+                },
+                'e +foo': None
+            }
+        })
+
         assert 'c' == find_spec(s['b'], lambda s: '+foo' in s).name
 
     def test_find_spec_sibling(self):
-        s = Spec('a',
-                 Spec('b +foo',
-                      Spec('c'),
-                      Spec('d')),
-                 Spec('e +foo'))
+
+        s = Spec.from_literal({
+            'a': {
+                'b +foo': {
+                    'c': None,
+                    'd': None
+                },
+                'e +foo': None
+            }
+        })
+
         assert 'e' == find_spec(s['b'], lambda s: '+foo' in s).name
         assert 'b' == find_spec(s['e'], lambda s: '+foo' in s).name
 
-        s = Spec('a',
-                 Spec('b +foo',
-                      Spec('c'),
-                      Spec('d')),
-                 Spec('e',
-                      Spec('f +foo')))
+        s = Spec.from_literal({
+            'a': {
+                'b +foo': {
+                    'c': None,
+                    'd': None
+                },
+                'e': {
+                    'f +foo': None
+                }
+            }
+        })
+
         assert 'f' == find_spec(s['b'], lambda s: '+foo' in s).name
 
     def test_find_spec_self(self):
-        s = Spec('a',
-                 Spec('b +foo',
-                      Spec('c'),
-                      Spec('d')),
-                 Spec('e'))
+        s = Spec.from_literal({
+            'a': {
+                'b +foo': {
+                    'c': None,
+                    'd': None
+                },
+                'e': None
+            }
+        })
         assert 'b' == find_spec(s['b'], lambda s: '+foo' in s).name
 
     def test_find_spec_none(self):
-        s = Spec('a',
-                 Spec('b',
-                      Spec('c'),
-                      Spec('d')),
-                 Spec('e'))
+        s = Spec.from_literal({
+            'a': {
+                'b': {
+                    'c': None,
+                    'd': None
+                },
+                'e': None
+            }
+        })
         assert find_spec(s['b'], lambda s: '+foo' in s) is None
 
     def test_compiler_child(self):

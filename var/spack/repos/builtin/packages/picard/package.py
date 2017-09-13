@@ -1,5 +1,5 @@
 ##############################################################################
-# Copyright (c) 2013-2016, Lawrence Livermore National Security, LLC.
+# Copyright (c) 2013-2017, Lawrence Livermore National Security, LLC.
 # Produced at the Lawrence Livermore National Laboratory.
 #
 # This file is part of Spack.
@@ -7,7 +7,7 @@
 # LLNL-CODE-647188
 #
 # For details, see https://github.com/llnl/spack
-# Please also see the LICENSE file for our notice and the LGPL.
+# Please also see the NOTICE and LICENSE files for our notice and the LGPL.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License (as
@@ -44,7 +44,7 @@ class Picard(Package):
     version('1.140', '308f95516d94c1f3273a4e7e2b315ec2',
             url='https://github.com/broadinstitute/picard/releases/download/1.140/picard-tools-1.140.zip')
 
-    depends_on('jdk@8:', type='run')
+    depends_on('java@8:', type='run')
 
     def install(self, spec, prefix):
         mkdirp(prefix.bin)
@@ -63,7 +63,7 @@ class Picard(Package):
 
         # Munge the helper script to explicitly point to java and the
         # jar file.
-        java = join_path(self.spec['jdk'].prefix, 'bin', 'java')
+        java = join_path(self.spec['java'].prefix, 'bin', 'java')
         kwargs = {'ignore_absent': False, 'backup': False, 'string': False}
         filter_file('^java', java, script, **kwargs)
         filter_file('picard.jar', join_path(prefix.bin, 'picard.jar'),

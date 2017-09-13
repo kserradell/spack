@@ -1,6 +1,6 @@
 # flake8: noqa
 ##############################################################################
-# Copyright (c) 2013-2016, Lawrence Livermore National Security, LLC.
+# Copyright (c) 2013-2017, Lawrence Livermore National Security, LLC.
 # Produced at the Lawrence Livermore National Laboratory.
 #
 # This file is part of Spack.
@@ -8,7 +8,7 @@
 # LLNL-CODE-647188
 #
 # For details, see https://github.com/llnl/spack
-# Please also see the LICENSE file for our notice and the LGPL.
+# Please also see the NOTICE and LICENSE files for our notice and the LGPL.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License (as
@@ -172,10 +172,13 @@ from spack.package import Package, run_before, run_after, on_package_attributes
 from spack.build_systems.makefile import MakefilePackage
 from spack.build_systems.autotools import AutotoolsPackage
 from spack.build_systems.cmake import CMakePackage
+from spack.build_systems.qmake import QMakePackage
+from spack.build_systems.scons import SConsPackage
 from spack.build_systems.waf import WafPackage
 from spack.build_systems.python import PythonPackage
 from spack.build_systems.r import RPackage
 from spack.build_systems.perl import PerlPackage
+from spack.build_systems.intel import IntelPackage
 
 __all__ += [
     'run_before',
@@ -185,10 +188,13 @@ __all__ += [
     'MakefilePackage',
     'AutotoolsPackage',
     'CMakePackage',
+    'QMakePackage',
+    'SConsPackage',
     'WafPackage',
     'PythonPackage',
     'RPackage',
     'PerlPackage',
+    'IntelPackage',
 ]
 
 from spack.version import Version, ver
@@ -223,12 +229,13 @@ if editor is not None:
 else:
     editor = which('vim', 'vi', 'emacs', 'nano')
 
+# If there is no editor, only raise an error if we actually try to use it.
 if not editor:
-    default = default_editors[0]
-    msg  = 'Default text editor, {0}, not found.\n'.format(default)
-    msg += 'Please set the EDITOR environment variable to your preferred '
-    msg += 'text editor, or install {0}.'.format(default)
-    raise EnvironmentError(msg)
+    def editor_not_found(*args, **kwargs):
+        raise EnvironmentError(
+            'No text editor found! Please set the EDITOR environment variable '
+            'to your preferred text editor.')
+    editor = editor_not_found
 
 from spack.package import \
     install_dependency_symlinks, flatten_dependencies, \

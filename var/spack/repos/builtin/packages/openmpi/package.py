@@ -1,5 +1,5 @@
 ##############################################################################
-# Copyright (c) 2013-2016, Lawrence Livermore National Security, LLC.
+# Copyright (c) 2013-2017, Lawrence Livermore National Security, LLC.
 # Produced at the Lawrence Livermore National Laboratory.
 #
 # This file is part of Spack.
@@ -7,7 +7,7 @@
 # LLNL-CODE-647188
 #
 # For details, see https://github.com/llnl/spack
-# Please also see the LICENSE file for our notice and the LGPL.
+# Please also see the NOTICE and LICENSE files for our notice and the LGPL.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License (as
@@ -49,6 +49,18 @@ def _verbs_dir():
     except TypeError:
         return None
     except ProcessError:
+        return None
+
+
+def _mxm_dir():
+    """Look for default directory where the Mellanox package is
+    installed. Return None if not found.
+    """
+    # Only using default directory; make this more flexible in the future
+    path = "/opt/mellanox/mxm"
+    if os.path.isdir(path):
+        return path
+    else:
         return None
 
 
@@ -189,7 +201,7 @@ class Openmpi(AutotoolsPackage):
 
     depends_on('hwloc')
     depends_on('hwloc +cuda', when='+cuda')
-    depends_on('jdk', when='+java')
+    depends_on('java', when='+java')
     depends_on('sqlite', when='+sqlite3@:1.11')
 
     conflicts('+cuda', when='@:1.6')  # CUDA support was added in 1.7
@@ -198,8 +210,8 @@ class Openmpi(AutotoolsPackage):
     conflicts('fabrics=mxm', when='@:1.5.3')  # MXM support was added in 1.5.4
 
     def url_for_version(self, version):
-        return "http://www.open-mpi.org/software/ompi/v%s/downloads/openmpi-%s.tar.bz2" % (
-            version.up_to(2), version)
+        url = "http://www.open-mpi.org/software/ompi/v{0}/downloads/openmpi-{1}.tar.bz2"
+        return url.format(version.up_to(2), version)
 
     @property
     def libs(self):
@@ -251,6 +263,17 @@ class Openmpi(AutotoolsPackage):
             line += '={0}'.format(path)
         return line
 
+    def with_or_without_mxm(self, activated):
+        opt = 'mxm'
+        # If the option has not been activated return --without-mxm
+        if not activated:
+            return '--without-{0}'.format(opt)
+        line = '--with-{0}'.format(opt)
+        path = _mxm_dir()
+        if (path is not None):
+            line += '={0}'.format(path)
+        return line
+
     @run_before('autoreconf')
     def die_without_fortran(self):
         # Until we can pass variants such as +fortran through virtual
@@ -285,7 +308,7 @@ class Openmpi(AutotoolsPackage):
                 config_args.extend([
                     '--enable-java',
                     '--enable-mpi-java',
-                    '--with-jdk-dir={0}'.format(spec['jdk'].prefix)
+                    '--with-jdk-dir={0}'.format(spec['java'].prefix)
                 ])
             else:
                 config_args.extend([

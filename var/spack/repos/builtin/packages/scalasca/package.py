@@ -1,5 +1,5 @@
 ##############################################################################
-# Copyright (c) 2013-2016, Lawrence Livermore National Security, LLC.
+# Copyright (c) 2013-2017, Lawrence Livermore National Security, LLC.
 # Produced at the Lawrence Livermore National Laboratory.
 #
 # This file is part of Spack.
@@ -7,7 +7,7 @@
 # LLNL-CODE-647188
 #
 # For details, see https://github.com/llnl/spack
-# Please also see the LICENSE file for our notice and the LGPL.
+# Please also see the NOTICE and LICENSE files for our notice and the LGPL.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License (as
@@ -62,5 +62,10 @@ class Scalasca(AutotoolsPackage):
 
         config_args.append("--with-cube=%s" % spec['cube'].prefix.bin)
         config_args.append("--with-otf2=%s" % spec['otf2'].prefix.bin)
+
+        if self.spec['mpi'].name == 'openmpi':
+            config_args.append("--with-mpi=openmpi")
+        elif self.spec.satisfies('^mpich@3:'):
+            config_args.append("--with-mpi=mpich3")
 
         return config_args

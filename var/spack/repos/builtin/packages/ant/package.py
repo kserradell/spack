@@ -1,5 +1,5 @@
 ##############################################################################
-# Copyright (c) 2013-2016, Lawrence Livermore National Security, LLC.
+# Copyright (c) 2013-2017, Lawrence Livermore National Security, LLC.
 # Produced at the Lawrence Livermore National Laboratory.
 #
 # This file is part of Spack.
@@ -7,7 +7,7 @@
 # LLNL-CODE-647188
 #
 # For details, see https://github.com/llnl/spack
-# Please also see the LICENSE file for our notice and the LGPL.
+# Please also see the NOTICE and LICENSE files for our notice and the LGPL.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License (as
@@ -41,7 +41,7 @@ class Ant(Package):
     version('1.9.7',  'a2fd9458c76700b7be51ef12f07d4bb1')
     version('1.9.6',  '29b7507c9053e301d2b85091f2aec6f0')
 
-    depends_on('jdk')
+    depends_on('java')
 
     def install(self, spec, prefix):
         env['ANT_HOME'] = self.prefix

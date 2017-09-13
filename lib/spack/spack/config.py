@@ -1,5 +1,5 @@
 ##############################################################################
-# Copyright (c) 2013-2016, Lawrence Livermore National Security, LLC.
+# Copyright (c) 2013-2017, Lawrence Livermore National Security, LLC.
 # Produced at the Lawrence Livermore National Laboratory.
 #
 # This file is part of Spack.
@@ -7,7 +7,7 @@
 # LLNL-CODE-647188
 #
 # For details, see https://github.com/llnl/spack
-# Please also see the LICENSE file for our notice and the LGPL.
+# Please also see the NOTICE and LICENSE files for our notice and the LGPL.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License (as
@@ -162,7 +162,7 @@ class ConfigScope(object):
     def __init__(self, name, path):
         self.name = name           # scope name.
         self.path = path           # path to directory containing configs.
-        self.sections = {}         # sections read from config files.
+        self.sections = syaml.syaml_dict()  # sections read from config files.
 
         # Register in a dict of all ConfigScopes
         # TODO: make this cleaner.  Mocking up for testing is brittle.
@@ -197,7 +197,7 @@ class ConfigScope(object):
 
     def clear(self):
         """Empty cached config information."""
-        self.sections = {}
+        self.sections = syaml.syaml_dict()
 
     def __repr__(self):
         return '<ConfigScope: %s: %s>' % (self.name, self.path)
@@ -314,7 +314,7 @@ def _mark_overrides(data):
         return [_mark_overrides(elt) for elt in data]
 
     elif isinstance(data, dict):
-        marked = {}
+        marked = syaml.syaml_dict()
         for key, val in iteritems(data):
             if isinstance(key, string_types) and key.endswith(':'):
                 key = syaml.syaml_str(key[:-1])

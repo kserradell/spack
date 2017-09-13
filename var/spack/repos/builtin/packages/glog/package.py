@@ -1,5 +1,5 @@
 ##############################################################################
-# Copyright (c) 2013-2016, Lawrence Livermore National Security, LLC.
+# Copyright (c) 2013-2017, Lawrence Livermore National Security, LLC.
 # Produced at the Lawrence Livermore National Laboratory.
 #
 # This file is part of Spack.
@@ -7,7 +7,7 @@
 # LLNL-CODE-647188
 #
 # For details, see https://github.com/llnl/spack
-# Please also see the LICENSE file for our notice and the LGPL.
+# Please also see the NOTICE and LICENSE files for our notice and the LGPL.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License (as
@@ -25,7 +25,7 @@
 from spack import *
 
 
-class Glog(AutotoolsPackage):
+class Glog(CMakePackage):
     """C++ implementation of the Google logging module."""
 
     homepage = "https://github.com/google/glog"
@@ -35,3 +35,6 @@ class Glog(AutotoolsPackage):
     version('0.3.3', 'c1f86af27bd9c73186730aa957607ed0')
 
     depends_on('gflags')
+
+    def cmake_args(self):
+        return ['-DBUILD_SHARED_LIBS=TRUE']

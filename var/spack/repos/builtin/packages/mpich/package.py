@@ -1,5 +1,5 @@
 ##############################################################################
-# Copyright (c) 2013-2016, Lawrence Livermore National Security, LLC.
+# Copyright (c) 2013-2017, Lawrence Livermore National Security, LLC.
 # Produced at the Lawrence Livermore National Laboratory.
 #
 # This file is part of Spack.
@@ -7,7 +7,7 @@
 # LLNL-CODE-647188
 #
 # For details, see https://github.com/llnl/spack
-# Please also see the LICENSE file for our notice and the LGPL.
+# Please also see the NOTICE and LICENSE files for our notice and the LGPL.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License (as
@@ -50,6 +50,11 @@ class Mpich(AutotoolsPackage):
     provides('mpi')
     provides('mpi@:3.0', when='@3:')
     provides('mpi@:1.3', when='@1:')
+
+    # fix MPI_Barrier segmentation fault
+    # see https://lists.mpich.org/pipermail/discuss/2016-May/004764.html
+    # and https://lists.mpich.org/pipermail/discuss/2016-June/004768.html
+    patch('mpich32_clang.patch', when='@3.2%clang')
 
     def setup_dependent_environment(self, spack_env, run_env, dependent_spec):
         # On Cray, the regular compiler wrappers *are* the MPI wrappers.
