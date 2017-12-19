@@ -5,7 +5,7 @@
 # and is released as part of spack under the LGPL license.
 # LLNL-CODE-647188
 #
-# For details, see https://github.com/llnl/spack
+# For details, see https://github.com/spack/spack
 # Please also see the NOTICE and LICENSE files for the LLNL notice and LGPL.
 #
 # License
@@ -53,15 +53,19 @@
 # - Combining +mgridgen with +int64 or +float32 probably won't work.
 #
 ##############################################################################
-from spack import *
-from spack.environment import *
-import llnl.util.tty as tty
-
 import glob
 import re
 import shutil
 import os
-from spack.pkg.builtin.openfoam_com import *
+
+import llnl.util.tty as tty
+
+from spack import *
+from spack.pkg.builtin.openfoam_com import add_extra_files
+from spack.pkg.builtin.openfoam_com import write_environ
+from spack.pkg.builtin.openfoam_com import rewrite_environ_files
+from spack.pkg.builtin.openfoam_com import mplib_content
+from spack.pkg.builtin.openfoam_com import OpenfoamArch
 
 
 class OpenfoamOrg(Package):
@@ -77,7 +81,9 @@ class OpenfoamOrg(Package):
     baseurl  = "https://github.com/OpenFOAM"
     url      = "https://github.com/OpenFOAM/OpenFOAM-4.x/archive/version-4.1.tar.gz"
 
-    version('4.1', '318a446c4ae6366c7296b61184acd37c',
+    version('5.0', 'cd8c5bdd3ff39c34f61747c8e55f59d1',
+            url=baseurl + '/OpenFOAM-5.x/archive/version-5.0.tar.gz')
+    version('4.1', 'afd7d8e66e7db0ffaf519b14f1a8e1d4',
             url=baseurl + '/OpenFOAM-4.x/archive/version-4.1.tar.gz')
     version('develop', git='https://github.com/OpenFOAM/OpenFOAM-dev.git')
 
@@ -103,8 +109,9 @@ class OpenfoamOrg(Package):
     assets = ['bin/foamEtcFile']
 
     # Version-specific patches
+    patch('50-etc.patch', when='@5.0:')
     patch('41-etc.patch', when='@4.1')
-    patch('41-site.patch', when='@4.1')
+    patch('41-site.patch', when='@4.1:')
 
     # Some user config settings
     config = {

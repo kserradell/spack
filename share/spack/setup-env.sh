@@ -6,7 +6,7 @@
 # Created by Todd Gamblin, tgamblin@llnl.gov, All rights reserved.
 # LLNL-CODE-647188
 #
-# For details, see https://github.com/llnl/spack
+# For details, see https://github.com/spack/spack
 # Please also see the NOTICE and LICENSE files for our notice and the LGPL.
 #
 # This program is free software; you can redistribute it and/or modify
@@ -210,7 +210,7 @@ export SPACK_SHELL=$(_spack_determine_shell)
 # Check whether a function of the given name is defined
 #
 function _spack_fn_exists() {
-	type $1 2>&1 | grep -q 'function'
+	LANG= type $1 2>&1 | grep -q 'function'
 }
 
 need_module="no"
@@ -230,26 +230,22 @@ if [ "${need_module}" = "yes" ]; then
         export MODULE_PREFIX=${module_prefix}
         _spack_pathadd PATH "${MODULE_PREFIX}/Modules/bin"
         module() { eval `${MODULE_PREFIX}/Modules/bin/modulecmd ${SPACK_SHELL} $*`; }
-        echo "INFO: Using spack managed module system."
-    else
-        echo "WARNING: A method for managing modules does not currently exist."
-        echo ""
-        echo "To resolve this you may either:"
-        echo "1. Allow spack to handle this by running 'spack bootstrap'"
-        echo "   and sourcing this script again."
-        echo "2. Install and activate a supported module managment engine manually"
-        echo "   Supported engines include: environment-modules and lmod"
     fi;
-else
-    echo "INFO: Using system available module system."
 fi;
 
 #
 # Set up modules and dotkit search paths in the user environment
 #
-_sp_sys_type=$(spack-python -c 'print(spack.architecture.sys_type())')
-_sp_dotkit_root=$(spack-python -c "print(spack.util.path.canonicalize_path(spack.config.get_config('config').get('module_roots', {}).get('dotkit')))")
-_sp_tcl_root=$(spack-python -c "print(spack.util.path.canonicalize_path(spack.config.get_config('config').get('module_roots', {}).get('tcl')))")
+
+_python_command=$(printf  "%s\\\n%s\\\n%s" \
+"print(\'_sp_sys_type={0}\'.format(spack.architecture.sys_type()))" \
+"print(\'_sp_dotkit_root={0}\'.format(spack.util.path.canonicalize_path(spack.config.get_config(\'config\').get(\'module_roots\', {}).get(\'dotkit\'))))" \
+"print(\'_sp_tcl_root={0}\'.format(spack.util.path.canonicalize_path(spack.config.get_config(\'config\').get(\'module_roots\', {}).get(\'tcl\'))))"
+)
+
+_assignment_command=$(spack-python -c "exec('${_python_command}')")
+eval ${_assignment_command}
+
 _spack_pathadd DK_NODE    "${_sp_dotkit_root%/}/$_sp_sys_type"
 _spack_pathadd MODULEPATH "${_sp_tcl_root%/}/$_sp_sys_type"
 

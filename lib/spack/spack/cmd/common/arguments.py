@@ -6,7 +6,7 @@
 # Created by Todd Gamblin, tgamblin@llnl.gov, All rights reserved.
 # LLNL-CODE-647188
 #
-# For details, see https://github.com/llnl/spack
+# For details, see https://github.com/spack/spack
 # Please also see the NOTICE and LICENSE files for our notice and the LGPL.
 #
 # This program is free software; you can redistribute it and/or modify
@@ -106,8 +106,8 @@ _arguments['constraint'] = Args(
 _arguments['module_type'] = Args(
     '-m', '--module-type',
     choices=spack.modules.module_types.keys(),
-    default=list(spack.modules.module_types.keys())[0],
-    help='type of module files [default: %(default)s]')
+    action='append',
+    help='type of module file. More than one choice is allowed [default: tcl]')  # NOQA: ignore=E501
 
 _arguments['yes_to_all'] = Args(
     '-y', '--yes-to-all', action='store_true', dest='yes_to_all',
